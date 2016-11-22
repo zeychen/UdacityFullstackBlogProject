@@ -92,9 +92,9 @@ def valid_email(email):
 
 class SignUp(Handler):
 
-    # render sign up form
     def get(self):
-        self.response.headers['Content-Type'] = "text/plain"
+        #render sign up form
+        self.render("user.html")
         # cookie object
         # cookie.get >>> check in dictionary to see if key exists
             # if key doesn't exist then set to default value of 0
@@ -114,12 +114,11 @@ class SignUp(Handler):
         self.response.headers.add_header('Set-Cookie', 'visits=%s' % new_cookie_val)
 
         # special message
-        if visits > 10:
-            self.write("You are the best ever")
-        else:
-            self.write("You've been to the site %s times" % visits)
-    def get(self):
-        self.render("user.html")
+        # if visits > 10:
+        #     self.write("You are the best ever")
+        # else:
+        #     self.write("You've been to the site %s times" % visits)
+
     def post(self):
         # get values from html
         have_error = False
