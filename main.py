@@ -3,6 +3,8 @@ import re
 import hashlib
 import webapp2
 import jinja2
+import random
+import string
 
 from google.appengine.ext import db
 """
@@ -41,15 +43,15 @@ def check_secure_val(h):
 def make_salt():
     return ''.join(random.choice(string.letters) for x in xrange(5))
 
-def make_pw_hash(name, pw, salt = None):
+def make_pw_hash(pw, salt = None):
     if not salt:
         salt = make_salt()
-    h = hashlib.sha256(name + pw + salt).hexdigest()
+    h = hashlib.sha256(pw + salt).hexdigest()
     return '%s,%s' % (h, salt)
     
-def valid_pw(name, pw, h):
+def valid_pw(pw, h):
     salt = h.split(',')[1]
-    if h == make_pw_hash(name, pw, salt):
+    if h == make_pw_hash(pw, salt):
         return True
 
 ########## jinja template for rendering ##########
@@ -113,8 +115,8 @@ class SignUp(Handler):
         # set cookie
         self.response.headers.add_header('Set-Cookie', 'visits=%s' % new_cookie_val)
 
-        # special message
-        # if visits > 10:
+        # # special message
+        # if visits > 10000:
         #     self.write("You are the best ever")
         # else:
         #     self.write("You've been to the site %s times" % visits)
@@ -123,23 +125,27 @@ class SignUp(Handler):
         # get values from html
         have_error = False
         username = self.request.get('username')
-        password = self.request.get('password')
+        input_password = self.request.get('password')
         verify = self.request.get('verify')
         email = self.request.get('email')
 
         # store values that will be sent back to form if invalid
         params = dict(username = username,
                       email = email)
+        # hash password and verify
+        password = make_pw_hash(input_password)
+        unhashed = valid_pw(verify, password)
 
         # test values
         if not valid_username(username):
             params['error_username'] = "That's not a valid username."
             have_error = True
 
-        if not valid_password(password):
+        if not valid_password(input_password):
             params['error_password'] = "That wasn't a valid password."
             have_error = True
-        elif password != verify:
+
+        elif unhashed != True:
             params['error_verify'] = "Your passwords didn't match."
             have_error = True
 
