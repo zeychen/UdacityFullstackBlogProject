@@ -1,75 +1,34 @@
 import os
 import re
+import random
 import hashlib
+import hmac
+from string import letters
+
 import webapp2
 import jinja2
-import random
-from string import letters
-import hmac
 
 from google.appengine.ext import db
-"""
-Udacity Fullstack Nanodegree
-Multi-user blog
 
-
-- register form
-- login form
-- redirect to welcome page once logged in
-- logout redirect user to register page
-- edit own post
-- delete own post
-- like posts
-- unlike posts
-- check for registration errors
-- incorporate cookie and cookie hashing into sign up form
-- identify existent users
-"""
-
-"""
-########## Jinja template for rendering ##########
-"""
-# template directory >>> current-directory/templates
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-# jinja looks for templates in template_dir
-# auto escape on
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
-                                        autoescape = True)
+                               autoescape = True)
 
-# load template file and create jinja template t
-# returns string
+secret = 'fart'
+
 def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
 
-"""
-########## Hash User Cookie ##########
-- hash cookies to prevent user fraud
-"""
-
-SECRET = "Sl33pyZ0ey"
-
-def make_secure_val(value):
-    return "%s|%s" % (value, hmac.new(SECRET,value).hexdigest())
+def make_secure_val(val):
+    return '%s|%s' % (val, hmac.new(secret, val).hexdigest())
 
 def check_secure_val(secure_val):
     val = secure_val.split('|')[0]
     if secure_val == make_secure_val(val):
-        return val   
+        return val
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"""
-########## Blog Page Handler ##########
-private functions (usage):
-- write (write to webpage)
-- render_str + render (help render webpage)
-- set secure cookie (hash cookie and add to header)
-- read secure cookie (check cookie validity)
-- login (make user id into hashed cookie)
-- logout (clear hashed cookie in header to redirect user to signup page)
-- initialize (check to see if user is logged in)
-"""
-class Handler(webapp2.RequestHandler):
+class BlogHandler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
 
@@ -105,10 +64,12 @@ def render_post(response, post):
     response.out.write('<b>' + post.subject + '</b><br>')
     response.out.write(post.content)
 
-"""
-########## Hash Password ##########
-- password security
-"""
+# class MainPage(BlogHandler):
+#   def get(self):
+#       self.write('Hello, Udacity!')
+
+
+##### user stuff
 def make_salt(length = 5):
     return ''.join(random.choice(letters) for x in xrange(length))
 
@@ -122,40 +83,23 @@ def valid_pw(name, password, h):
     salt = h.split(',')[0]
     return h == make_pw_hash(name, password, salt)
 
-# store user
 def users_key(group = 'default'):
     return db.Key.from_path('users', group)
 
-"""
-########## Save Login Info To Database ##########
-- name >>> required
-- password >>> required
-- email >>> optional
-"""
 class User(db.Model):
     name = db.StringProperty(required = True)
     pw_hash = db.StringProperty(required = True)
     email = db.StringProperty()
 
-    # get user by id function
-    # @classmethod >>> decorator
-    # cls refers to class User not instance of User
-    # ex: User.by_id(<id>) >>> call get_by_id function (built into datastore) to load user onto database
     @classmethod
     def by_id(cls, uid):
         return User.get_by_id(uid, parent = users_key())
 
-    # get user by name function
-    # uses datastore procedural code for doing database look up instead of Google SQL (GQL)
     @classmethod
     def by_name(cls, name):
         u = User.all().filter('name =', name).get()
         return u
 
-    # register function
-    # takes name, password, and email and creates a new user object
-    # 1. creates password hash from name and password
-    # 2. creates user object
     @classmethod
     def register(cls, name, pw, email = None):
         pw_hash = make_pw_hash(name, pw)
@@ -164,7 +108,6 @@ class User(db.Model):
                     pw_hash = pw_hash,
                     email = email)
 
-    # login function
     @classmethod
     def login(cls, name, pw):
         u = cls.by_name(name)
@@ -172,16 +115,11 @@ class User(db.Model):
             return u
 
 
-########## Blog ##########
+##### blog stuff
+
 def blog_key(name = 'default'):
     return db.Key.from_path('blogs', name)
 
-"""
-########## Post ##########
-- render front page with latest 10 blog entries
-- render new post page
-- saves blog posts to database
-"""
 class Post(db.Model):
     subject = db.StringProperty(required = True)
     content = db.TextProperty(required = True)
@@ -192,12 +130,12 @@ class Post(db.Model):
         self._render_text = self.content.replace('\n', '<br>')
         return render_str("post.html", p = self)
 
-class BlogFront(Handler):
+class BlogFront(BlogHandler):
     def get(self):
         posts = greetings = Post.all().order('-created')
         self.render('front.html', posts = posts)
 
-class PostPage(Handler):
+class PostPage(BlogHandler):
     def get(self, post_id):
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
         post = db.get(key)
@@ -208,7 +146,7 @@ class PostPage(Handler):
 
         self.render("permalink.html", post = post)
 
-class NewPost(Handler):
+class NewPost(BlogHandler):
     def get(self):
         if self.user:
             self.render("newpost.html")
@@ -230,14 +168,6 @@ class NewPost(Handler):
             error = "subject and content, please!"
             self.render("newpost.html", subject=subject, content=content, error=error)
 
-
-
-"""
-########## Sign Up ##########
-- render sign up page
-- validate user input
-"""
-# match requirements
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
     return username and USER_RE.match(username)
@@ -246,38 +176,32 @@ PASS_RE = re.compile(r"^.{3,20}$")
 def valid_password(password):
     return password and PASS_RE.match(password)
 
-# optional email >>> either no email or match requirement
 EMAIL_RE  = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
 def valid_email(email):
     return not email or EMAIL_RE.match(email)
 
-class SignUp(Handler):
+class Signup(BlogHandler):
     def get(self):
-        #render sign up form
         self.render("signup-form.html")
 
     def post(self):
-        # get values from html
         have_error = False
         self.username = self.request.get('username')
-        self.input_password = self.request.get('password')
+        self.password = self.request.get('password')
         self.verify = self.request.get('verify')
         self.email = self.request.get('email')
 
-        # store values that will be sent back to form if invalid
         params = dict(username = self.username,
                       email = self.email)
 
-        # test values
         if not valid_username(self.username):
             params['error_username'] = "That's not a valid username."
             have_error = True
 
-        if not valid_password(self.input_password):
+        if not valid_password(self.password):
             params['error_password'] = "That wasn't a valid password."
             have_error = True
-
-        elif self.input_password != self.verify:
+        elif self.password != self.verify:
             params['error_verify'] = "Your passwords didn't match."
             have_error = True
 
@@ -285,36 +209,33 @@ class SignUp(Handler):
             params['error_email'] = "That's not a valid email."
             have_error = True
 
-        # if error >>> send user back to signup form
-        # if no error >>> send user to welcome page
         if have_error:
             self.render('signup-form.html', **params)
         else:
-            # self.done() don't do anything but throws error message
             self.done()
 
     def done(self, *a, **kw):
         raise NotImplementedError
 
-########## Signup ##########
-class Register(SignUp):
+# class Unit2Signup(Signup):
+#     def done(self):
+#         self.redirect('/unit2/welcome?username=' + self.username)
+
+class Register(Signup):
     def done(self):
+        #make sure the user doesn't already exist
         u = User.by_name(self.username)
         if u:
             msg = 'That user already exists.'
             self.render('signup-form.html', error_username = msg)
         else:
-            u = User.register(self.username, self.input_password, self.email)
-            # stores user in database
+            u = User.register(self.username, self.password, self.email)
             u.put()
 
-            # call login function to set cookie for user
             self.login(u)
             self.redirect('/blog')
 
-
-########## Login ##########
-class Login(Handler):
+class Login(BlogHandler):
     def get(self):
         self.render('login-form.html')
 
@@ -330,48 +251,36 @@ class Login(Handler):
             msg = 'Invalid login'
             self.render('login-form.html', error = msg)
 
-########## Logout ##########
-class Logout(Handler):
+class Logout(BlogHandler):
     def get(self):
         self.logout()
-        self.redirect('/signup')
+        self.redirect('/blog')
 
-
-
-"""
-########## Main Page ##########
-- inherits from Handler >>> has access to user
-"""
-# class MainPage(Handler):
+# class Unit3Welcome(BlogHandler):
 #     def get(self):
 #         if self.user:
 #             self.render('welcome.html', username = self.user.name)
 #         else:
 #             self.redirect('/signup')
 
-
-"""
-########## Welcome Page ##########
-- render welcome page
-"""
-# class Welcome(Handler):
+# class Welcome(BlogHandler):
 #     def get(self):
-#         if self.user:
-#             self.render('welcome.html', username = self.user.name)
+#         username = self.request.get('username')
+#         if valid_username(username):
+#             self.render('welcome.html', username = username)
 #         else:
-#             self.redirect('/signup')
+#             self.redirect('/unit2/signup')
 
-app = webapp2.WSGIApplication([('/signup', Register),
-                               ('/login', Login),
-                               ('/logout', Logout),
+app = webapp2.WSGIApplication([('/', MainPage),
+                               # ('/unit2/rot13', Rot13),
+                               # ('/unit2/signup', Unit2Signup),
+                               # ('/unit2/welcome', Welcome),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPost),
+                               ('/signup', Register),
+                               ('/login', Login),
+                               ('/logout', Logout),
+                               # ('/unit3/welcome', Unit3Welcome),
                                ],
-                               debug=True)
-
-
-
-
-
-
+                              debug=True)
