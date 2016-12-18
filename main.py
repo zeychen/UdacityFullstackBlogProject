@@ -1,18 +1,25 @@
-import os
 import re
+import hmac
 import hashlib
+
 import webapp2
-import jinja2
+
 import random
 from string import letters
-import hmac
 
 from google.appengine.ext import db
+
+import os
+import jinja2
+
+
 """
 Udacity Fullstack Nanodegree
 Multi-user blog
+Author: Zee Chen
+Created: 12/15/2016
 
-
+== Main Module ==
 - register form
 - login form
 - redirect to welcome page once logged in
@@ -24,7 +31,9 @@ Multi-user blog
 - check for registration errors
 - incorporate cookie and cookie hashing into sign up form
 - identify existent users
+
 """
+
 
 """
 ########## Jinja template for rendering ##########
@@ -36,11 +45,13 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                         autoescape = True)
 
-# load template file and create jinja template t
-# returns string
+
 def render_str(template, **params):
+    # load template file and create jinja template t
+    # returns string
     t = jinja_env.get_template(template)
     return t.render(params)
+
 
 """
 ########## Hash User Cookie ##########
@@ -312,7 +323,6 @@ class Register(SignUp):
             self.login(u)
             self.redirect('/blog')
 
-
 ########## Login ##########
 class Login(Handler):
     def get(self):
@@ -334,34 +344,23 @@ class Login(Handler):
 class Logout(Handler):
     def get(self):
         self.logout()
-        self.redirect('/signup')
-
-
-
-"""
-########## Main Page ##########
-- inherits from Handler >>> has access to user
-"""
-# class MainPage(Handler):
-#     def get(self):
-#         if self.user:
-#             self.render('welcome.html', username = self.user.name)
-#         else:
-#             self.redirect('/signup')
+        self.redirect('/blog')
 
 
 """
 ########## Welcome Page ##########
+- inherits from Handler >>> has access to user
 - render welcome page
 """
-# class Welcome(Handler):
-#     def get(self):
-#         if self.user:
-#             self.render('welcome.html', username = self.user.name)
-#         else:
-#             self.redirect('/signup')
+class Welcome(Handler):
+    def get(self):
+        if self.user:
+            self.render('welcome.html', username = self.user.name)
+        else:
+            self.redirect('/blog')
 
-app = webapp2.WSGIApplication([('/signup', Register),
+app = webapp2.WSGIApplication([('/', Welcome),
+                               ('/signup', Register),
                                ('/login', Login),
                                ('/logout', Logout),
                                ('/blog/?', BlogFront),
