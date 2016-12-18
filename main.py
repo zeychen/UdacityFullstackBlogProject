@@ -144,6 +144,7 @@ class Handler(webapp2.RequestHandler):
 def render_post(response, post):
     response.out.write('<b>' + post.subject + '</b><br>')
     response.out.write(post.content)
+    # response.out.write(post.user_id)
 
 
 """ 
@@ -161,17 +162,17 @@ def blog_key(name = 'default'):
 - saves blog posts to database
 """
 class Post(db.Model):
-    # user_id = db.IntegerProperty(required=True)
+    user_id = db.IntegerProperty(required=False)
     subject = db.StringProperty(required = True)
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
 
 
-    # def GetUserName(self):
-    #     # get author of post
-    #     user = User.by_id(self.user_id)
-    #     return user.name
+    def GetUserName(self):
+        # get author of post
+        user = User.by_id(self.user_id)
+        return user.name
 
 
     def render(self):
@@ -179,10 +180,23 @@ class Post(db.Model):
         return render_str("post.html", p = self)
 
 
+# class Welcome(Handler):
+#     def get(self):
+#         username = self.request.get('username')
+#         if valid_username(username):
+#             self.render('/blog')
+#         else:
+#             self.redirect('/blog')
+
+
 class BlogFront(Handler):
     def get(self):
+        username = self.request.get('username')
         posts = greetings = Post.all().order('-created')
-        self.render('front.html', posts = posts)
+        if valid_username(username):
+            self.render('front.html', posts = posts)
+        else:
+            self.render('front.html', posts = posts)
 
 class PostPage(Handler):
     def get(self, post_id):
@@ -389,18 +403,11 @@ class Logout(Handler):
 
 
 
-class Welcome(Handler):
-    def get(self):
-        # redirect user to front blog page
-        self.redirect('/blog')
-
-app = webapp2.WSGIApplication([('/', Welcome),
+app = webapp2.WSGIApplication([('/', BlogFront),
                                ('/signup', Register),
                                ('/login', Login),
-                               ('/logout', Logout),
-                               ('/blog/?', BlogFront),
-                               ('/blog/([0-9]+)', PostPage),
-                               ('/blog/newpost', NewPost),
+                               ('/logout', Logout),                               ('/blog/([0-9]+)', PostPage),
+                               ('/newpost', NewPost),
                                ],
                                debug=True)
 
