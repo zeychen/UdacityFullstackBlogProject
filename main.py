@@ -388,6 +388,12 @@ class Logout(Handler):
         self.redirect('/blog')
 
 
+
+class Welcome(Handler):
+    def get(self):
+        # redirect user to front blog page
+        self.redirect('/blog')
+
 app = webapp2.WSGIApplication([('/', Welcome),
                                ('/signup', Register),
                                ('/login', Login),
