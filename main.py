@@ -141,111 +141,6 @@ class Handler(webapp2.RequestHandler):
         uid = self.read_secure_cookie('user_id')
         self.user = uid and User.by_id(int(uid))
 
-def render_post(response, post):
-    response.out.write('<b>' + post.subject + '</b><br>')
-    response.out.write(post.content)
-    # response.out.write(post.user_id)
-
-
-""" 
-############################## Blog Module ##############################
-"""
-
-
-def blog_key(name = 'default'):
-    return db.Key.from_path('blogs', name)
-
-"""
-########## Post ##########
-- render front page with latest 10 blog entries
-- render new post page
-- saves blog posts to database
-"""
-class Post(db.Model):
-    user_id = db.IntegerProperty(required=False)
-    subject = db.StringProperty(required = True)
-    content = db.TextProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-    last_modified = db.DateTimeProperty(auto_now = True)
-
-
-    def GetUserName(self):
-        # get author of post
-        user = User.by_id(self.user_id)
-        return user.name
-
-
-    def render(self):
-        self._render_text = self.content.replace('\n', '<br>')
-        return render_str("post.html", p = self)
-
-
-# class Welcome(Handler):
-#     def get(self):
-#         username = self.request.get('username')
-#         if valid_username(username):
-#             self.render('/blog')
-#         else:
-#             self.redirect('/blog')
-
-
-class BlogFront(Handler):
-    def get(self):
-        username = self.request.get('username')
-        posts = greetings = Post.all().order('-created')
-        if valid_username(username):
-            self.render('front.html', posts = posts)
-        else:
-            self.render('front.html', posts = posts)
-
-class PostPage(Handler):
-    def get(self, post_id):
-        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
-        post = db.get(key)
-
-        if not post:
-            self.error(404)
-            return
-
-        self.render("permalink.html", post = post)
-
-class NewPost(Handler):
-    def get(self):
-        if self.user:
-            self.render("newpost.html")
-        else:
-            self.redirect("/login")
-
-    def post(self):
-        if not self.user:
-            self.redirect('/blog')
-
-        subject = self.request.get('subject')
-        content = self.request.get('content')
-
-        if subject and content:
-            p = Post(parent = blog_key(), subject = subject, content = content)
-            p.put()
-            self.redirect('/blog/%s' % str(p.key().id()))
-        else:
-            error = "subject and content, please!"
-            self.render("newpost.html", subject=subject, content=content, error=error)
-
-
-"""
-########## Welcome Page ##########
-- inherits from Handler >>> has access to user
-- render front blog page if logged in
-- render login page if not logged in
-"""
-
-
-class Welcome(Handler):
-    def get(self):
-        if self.user:
-            self.render('/blog', username = self.user.name)
-        else:
-            self.redirect('/login')
 
 
 """ 
@@ -269,13 +164,13 @@ class User(db.Model):
     # cls refers to class User not instance of User
     # ex: User.by_id(<id>) >>> call get_by_id function (built into datastore) to load user onto database
     @classmethod
-    def by_id(cls, uid):
+    def by_id(self, uid):
         return User.get_by_id(uid, parent = users_key())
 
     # get user by name function
     # uses datastore procedural code for doing database look up instead of Google SQL (GQL)
     @classmethod
-    def by_name(cls, name):
+    def by_name(self, name):
         u = User.all().filter('name =', name).get()
         return u
 
@@ -283,8 +178,9 @@ class User(db.Model):
     # takes name, password, and email and creates a new user object
     # 1. creates password hash from name and password
     # 2. creates user object
+    # does not store user
     @classmethod
-    def register(cls, name, pw, email = None):
+    def register(self, name, pw, email = None):
         pw_hash = make_pw_hash(name, pw)
         return User(parent = users_key(),
                     name = name,
@@ -293,8 +189,8 @@ class User(db.Model):
 
     # login function
     @classmethod
-    def login(cls, name, pw):
-        u = cls.by_name(name)
+    def login(self, name, pw):
+        u = self.by_name(name)
         if u and valid_pw(name, pw, u.pw_hash):
             return u
 
@@ -376,7 +272,7 @@ class Register(SignUp):
 
             # call login function to set cookie for user
             self.login(u)
-            self.redirect('/blog')
+            self.redirect('/')
 
 
 class Login(Handler):
@@ -390,7 +286,7 @@ class Login(Handler):
         u = User.login(username, password)
         if u:
             self.login(u)
-            self.redirect('/blog')
+            self.redirect('/')
         else:
             msg = 'Invalid login'
             self.render('login-form.html', error = msg)
@@ -399,15 +295,114 @@ class Login(Handler):
 class Logout(Handler):
     def get(self):
         self.logout()
-        self.redirect('/blog')
+        self.redirect('/')
+
+
+""" 
+############################## Blog Module ##############################
+"""
+
+
+def blog_key(name = 'default'):
+    # blog parent key
+    return db.Key.from_path('blogs', name)
+
+"""
+########## Post ##########
+- render front page with latest 10 blog entries
+- render new post page
+- saves blog posts to database
+"""
+class Post(db.Model):
+    # each post needs to have author, subject, content, and date created
+    user_id = db.IntegerProperty(required=True)
+    subject = db.StringProperty(required = True)
+    content = db.TextProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+    last_modified = db.DateTimeProperty(auto_now = True)
+
+
+    def getAuthor(self):
+        # get author of post
+        user = User.by_id(self.user_id)
+        return user.name
+
+
+    def render(self):
+        # render post using object data
+        self._render_text = self.content.replace('\n', '<br>')
+        return render_str("post.html", p = self)
+
+
+class BlogFront(Handler):
+    def get(self):
+        # looks up all post ordered by creation time
+        posts = db.GqlQuery("select * from Post order by created desc")
+        self.render('front.html', posts = posts)
+
+
+class PostPage(Handler):
+    def get(self, post_id):
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        post = db.get(key)
+
+        if not post:
+            self.error(404)
+            return
+
+        self.render("permalink.html", post = post)
+
+
+    def post(self, post_id):
+        uid = self.read_secure_cookie('user_id')
+        # find post with post_id (passed in from URL) whose parent is blog_key
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        # get post
+        post = db.get(key)
+
+
+        if not post:
+            self.error(404)
+            return
+
+        self.render("permalink.html", post = post)
+
+
+class NewPost(Handler):
+    def get(self):
+        if self.user:
+            self.render("newpost.html")
+        else:
+            self.redirect("/login")
+
+    def post(self):
+        if not self.user:
+            self.redirect('/')
+
+        subject = self.request.get('subject')
+        content = self.request.get('content')
+
+        if subject and content:
+            # store post object in database
+            p = Post(parent=blog_key(), user_id = self.user.key().id(),
+                     subject=subject, content=content)
+            p.put()
+            self.redirect('/blog/%s' % str(p.key().id()))
+        else:
+            error = "subject and content, please!"
+            self.render("newpost.html", subject=subject, 
+                        content=content, error=error)
 
 
 
-app = webapp2.WSGIApplication([('/', BlogFront),
+
+
+app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/signup', Register),
                                ('/login', Login),
-                               ('/logout', Logout),                               ('/blog/([0-9]+)', PostPage),
+                               ('/logout', Logout),                               
                                ('/newpost', NewPost),
+                               ('/blog/([0-9]+)', PostPage)
                                ],
                                debug=True)
 
