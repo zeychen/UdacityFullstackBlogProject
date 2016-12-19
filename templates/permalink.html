@@ -4,5 +4,21 @@
 	<div>
 		<a href="/blog/editpost/{{post.key().id()}}">Edit</a>
 	</div>
-  {{post.render() | safe}}
+  	{{post.render() | safe}}
+
+  	<form method="post" role="form" class="comment-form">
+        <label>
+          <div>comment</div>
+          <input name="comment">{{comment}}</input>
+        </label>
+        <input type="submit">
+    </form>
+    {% for c in comments %}
+      <blockquote>
+          <p>{{ c.comment }}</p>
+          <footer>{{ c.getAuthor() }}</footer>
+      </blockquote>
+    {% endfor %}
+
+
 {% endblock %}

@@ -279,6 +279,7 @@ class Login(Handler):
     def get(self):
         self.render('login-form.html')
 
+
     def post(self):
         username = self.request.get('username')
         password = self.request.get('password')
@@ -313,6 +314,8 @@ def blog_key(name = 'default'):
 - render new post page
 - saves blog posts to database
 """
+
+
 class Post(db.Model):
     # each post needs to have author, subject, content, and date created
     user_id = db.IntegerProperty(required=True)
@@ -346,15 +349,19 @@ class PostPage(Handler):
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
         post = db.get(key)
 
+        comments = db.GqlQuery("select * from Comment where post_id = " +
+                               post_id + " order by created desc")
+
+        # likes = db.GqlQuery("select * from Like where post_id="+post_id)
+
         if not post:
             self.error(404)
             return
 
-        self.render("permalink.html", post = post)
+        self.render("permalink.html", post = post, comments=comments)
 
 
     def post(self, post_id):
-        # uid = self.read_secure_cookie('user_id')
         # find post with post_id (passed in from URL) whose parent is blog_key
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
         # get post
@@ -365,7 +372,25 @@ class PostPage(Handler):
             self.error(404)
             return
 
-        self.render("permalink.html", post = post)
+        # initiate comment
+        if (self.user):
+            if(self.request.get('comment')):
+                # if comment button is clicked, 
+                # then create new comment entity 
+                # linked to user and post data
+                c = Comment(parent=blog_key(), user_id = self.user.key().id(),
+                            post_id=int(post_id), comment=self.request.get('comment'))
+                # save comment entity
+                c.put()
+
+        else:
+            self.redirect("/login?error=You need to login, " +
+                          "in order to post a comment.")
+
+        comments = db.GqlQuery("select * from Comment where post_id = " +
+                               post_id + "order by created desc")
+
+        self.render("permalink.html", post = post, comments=comments)
 
 
 class NewPost(Handler):
@@ -374,6 +399,7 @@ class NewPost(Handler):
             self.render("newpost.html")
         else:
             self.redirect("/login")
+
 
     def post(self):
         if not self.user:
@@ -429,6 +455,34 @@ class EditPost(Handler):
             error = "subject and content, please!"
             self.render("editpost.html", subject=subject,
                         content=content, error=error)
+
+
+"""
+~~~~~~~~~~~~~~~~~~~~~~~~~~ Delete Post ~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""
+
+
+
+
+"""
+########## Comment ##########
+- save comments as entities with post_id as key
+"""
+
+
+class Comment(db.Model):
+    # each post needs to have author, subject, content, and date created
+    user_id = db.IntegerProperty(required=True)
+    post_id = db.IntegerProperty(required=True)
+    comment = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    last_modified = db.DateTimeProperty(auto_now=True)
+
+    def getAuthor(self):
+        user = User.by_id(self.user_id)
+        return user.name
+
+
 
 app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/signup', Register),
