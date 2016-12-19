@@ -511,6 +511,60 @@ class Comment(db.Model):
         return user.name
 
 
+class EditComment(Handler):
+    def get(self, post_id, comment_id):
+        if self.user:
+            key = db.Key.from_path('Comment', int(comment_id), parent=blog_key())
+            comm = db.get(key)
+
+            if comm.user_id == self.user.key().id():
+                self.render("editcomment.html", comment=comm.comment)
+            else:
+                self.redirect("/blog/" + post_id + "?error=You don't have " +
+                              "access to edit this comment.")
+        else:
+            self.redirect("/login?error=You need to be logged, " +
+                          "in order to edit your comment.")
+
+
+    def post(self, post_id, comment_id):
+        if not self.user:
+            self.redirect('/blog')
+
+        comment = self.request.get('comment')
+
+        if comment:
+            key = db.Key.from_path('Comment', int(comment_id), parent=blog_key())
+            comm = db.get(key)
+            comm.comment = comment
+            comm.put()
+            self.redirect('/blog/%s' % post_id )
+        else:
+            error = "subject and content, please!"
+            self.render("editpost.html", subject=subject,
+                        content=content, error=error)
+
+
+# class DeleteComment(Handler):
+#     def get(self, post_id):
+#         if self.user:
+#             key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+#             post = db.get(key)
+
+#             posts = db.GqlQuery("select * from Post order by created desc")
+
+#             if post.user_id == self.user.key().id():
+#                 post.delete()
+#                 self.redirect('/')
+#             else:
+#                 self.redirect("/blog/" + post_id + "?error=You don't have " +
+#                               "access to delete this record.")
+#         else:
+#             self.redirect("/login?error=You need to be logged, in order" +
+#                           " to delete your post!!")
+
+#         self.redirect('/')
+
 
 app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/signup', Register),
@@ -519,7 +573,9 @@ app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/newpost', NewPost),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/deletepost/([0-9]+)', DeletePost),
-                               ('/blog/editpost/([0-9]+)', EditPost)
+                               ('/blog/editpost/([0-9]+)', EditPost),
+                               # ('/blog/deletecomment/([0-9]+)/([0-9]+)', DeleteComment),
+                               ('/blog/editcomment/([0-9]+)/([0-9]+)', EditComment)
                                ],
                                debug=True)
 

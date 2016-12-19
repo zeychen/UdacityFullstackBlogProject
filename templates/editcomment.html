@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>edit post</h2>
+
+        <form method="post" role="form">
+
+            <input type="hidden" id="post_id" name="post_id" value="{{post_id}}">
+            
+            <div class="form-group">
+                <label for="subject">Comment:</label>
+                <textarea name="comment" value="{{comment}}">{{comment}}</textarea>
+            </div>
+           
+            {% if error %}
+            <div class="alert alert-danger" role="alert">{{error}}</div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+{% endblock %}

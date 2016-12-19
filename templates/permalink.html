@@ -16,10 +16,14 @@
     </form>
     {% for c in comments %}
       <blockquote>
+
+    <a href="/blog/editcomment/{{post.key().id()}}/{{c.key().id()}}">Edit</a>
           <p>{{ c.comment }}</p>
           <footer>{{ c.getAuthor() }}</footer>
       </blockquote>
     {% endfor %}
 
+
+    
 
 {% endblock %}
