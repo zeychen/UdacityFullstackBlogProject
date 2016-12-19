@@ -372,16 +372,31 @@ class PostPage(Handler):
             self.error(404)
             return
 
-        # initiate comment
         if (self.user):
+            # if(self.request.get('like') and 
+            #    self.request.get('like') == "update"):
+            #     likes = db.GqlQuery("select * from Likes where post_id = " +
+            #                    post_id + "and user_id=" + str(self.key().id())
+
+            #     # make sure user don't like own post
+            #     if self.user.key().id() == post.user_id:
+            #         self.redirect("/blog/" + post_id +
+            #                       "?error=You cannot like your " +
+            #                       "post.!!")
+            #     elif likes.count() ==0:
+            #         l = Likes(parent=blog_key(), user_id = self.user.key().id(),
+            #                 post_id=int(post_id))
+            #         # save like entity
+            #         l.put()
+
             if(self.request.get('comment')):
                 # if comment button is clicked, 
                 # then create new comment entity 
                 # linked to user and post data
-                c = Comment(parent=blog_key(), user_id = self.user.key().id(),
+                comm = Comment(parent=blog_key(), user_id = self.user.key().id(),
                             post_id=int(post_id), comment=self.request.get('comment'))
                 # save comment entity
-                c.put()
+                comm.put()
 
         else:
             self.redirect("/login?error=You need to login, " +
@@ -457,10 +472,23 @@ class EditPost(Handler):
                         content=content, error=error)
 
 
-"""
-~~~~~~~~~~~~~~~~~~~~~~~~~~ Delete Post ~~~~~~~~~~~~~~~~~~~~~~~~~~
-"""
+class DeletePost(Handler):
+    def get(self, post_id):
+        if self.user:
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            post = db.get(key)
 
+            posts = db.GqlQuery("select * from Post order by created desc")
+
+            if post.user_id == self.user.key().id():
+                post.delete()
+                self.redirect('/')
+            else:
+                self.redirect("/blog/" + post_id + "?error=You don't have " +
+                              "access to delete this record.")
+        else:
+            self.redirect("/login?error=You need to be logged, in order" +
+                          " to delete your post!!")
 
 
 
@@ -490,6 +518,7 @@ app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/logout', Logout),                               
                                ('/newpost', NewPost),
                                ('/blog/([0-9]+)', PostPage),
+                               ('/blog/deletepost/([0-9]+)', DeletePost),
                                ('/blog/editpost/([0-9]+)', EditPost)
                                ],
                                debug=True)

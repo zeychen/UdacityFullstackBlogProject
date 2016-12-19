@@ -2,6 +2,7 @@
 
 {% block content %}
 	<div>
+    <a href="/blog/deletepost/{{post.key().id()}}">Delete</a>
 		<a href="/blog/editpost/{{post.key().id()}}">Edit</a>
 	</div>
   	{{post.render() | safe}}
