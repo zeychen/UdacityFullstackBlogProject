@@ -16,7 +16,7 @@
     </form>
     {% for c in comments %}
       <blockquote>
-
+    <a href="/blog/deletecomment/{{post.key().id()}}/{{c.key().id()}}">Delete</a>
     <a href="/blog/editcomment/{{post.key().id()}}/{{c.key().id()}}">Edit</a>
           <p>{{ c.comment }}</p>
           <footer>{{ c.getAuthor() }}</footer>

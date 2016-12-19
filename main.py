@@ -482,7 +482,7 @@ class DeletePost(Handler):
 
             if post.user_id == self.user.key().id():
                 post.delete()
-                self.redirect('/')
+                self.redirect('/?')
             else:
                 self.redirect("/blog/" + post_id + "?error=You don't have " +
                               "access to delete this record.")
@@ -545,25 +545,24 @@ class EditComment(Handler):
                         content=content, error=error)
 
 
-# class DeleteComment(Handler):
-#     def get(self, post_id):
-#         if self.user:
-#             key = db.Key.from_path('Post', int(post_id), parent=blog_key())
-#             post = db.get(key)
+class DeleteComment(Handler):
+    def get(self, post_id, comment_id):
+        if self.user:
+            key = db.Key.from_path('Comment', int(comment_id), parent=blog_key())
+            comment = db.get(key)
 
-#             posts = db.GqlQuery("select * from Post order by created desc")
+            comments = db.GqlQuery("select * from Comment order by created desc")
 
-#             if post.user_id == self.user.key().id():
-#                 post.delete()
-#                 self.redirect('/')
-#             else:
-#                 self.redirect("/blog/" + post_id + "?error=You don't have " +
-#                               "access to delete this record.")
-#         else:
-#             self.redirect("/login?error=You need to be logged, in order" +
-#                           " to delete your post!!")
+            if comment.user_id == self.user.key().id():
+                comment.delete()
+                self.redirect('/blog/' + post_id)
+            else:
+                self.redirect("/blog/" + post_id + "?error=You don't have " +
+                              "access to delete this comment.")
+        else:
+            self.redirect("/login?error=You need to be logged, in order" +
+                          " to delete your comment!!")
 
-#         self.redirect('/')
 
 
 app = webapp2.WSGIApplication([('/?', BlogFront),
@@ -574,7 +573,7 @@ app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/deletepost/([0-9]+)', DeletePost),
                                ('/blog/editpost/([0-9]+)', EditPost),
-                               # ('/blog/deletecomment/([0-9]+)/([0-9]+)', DeleteComment),
+                               ('/blog/deletecomment/([0-9]+)/([0-9]+)', DeleteComment),
                                ('/blog/editcomment/([0-9]+)/([0-9]+)', EditComment)
                                ],
                                debug=True)
