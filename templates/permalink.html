@@ -7,6 +7,11 @@
 	</div>
   	{{post.render() | safe}}
 
+    <form method="post" role="form">
+                <input type="hidden" class="form-control" id="like" name="like" value="update">
+                <button type="submit" class="btn btn-primary">Like {{likescount}}</button>
+            </form>
+
   	<form method="post" role="form" class="comment-form">
         <label>
           <div>comment</div>
