@@ -354,7 +354,7 @@ class PostPage(Handler):
 
 
     def post(self, post_id):
-        uid = self.read_secure_cookie('user_id')
+        # uid = self.read_secure_cookie('user_id')
         # find post with post_id (passed in from URL) whose parent is blog_key
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
         # get post
@@ -394,15 +394,49 @@ class NewPost(Handler):
                         content=content, error=error)
 
 
+class EditPost(Handler):
+    def get(self, post_id):
+        if self.user:
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            post = db.get(key)
+
+            if post.user_id == self.user.key().id():
+                self.render("editpost.html", subject=post.subject,
+                            content=post.content)
+            else:
+                self.redirect("/blog/" + post_id + "?error=You don't have " +
+                              "access to edit this record.")
+        else:
+            self.redirect("/login?error=You need to be logged, " +
+                          "in order to edit your post.")
 
 
+    def post(self, post_id):
+        if not self.user:
+            self.redirect('/blog')
+
+        subject = self.request.get('subject')
+        content = self.request.get('content')
+
+        if subject and content:
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            post = db.get(key)
+            post.subject = subject
+            post.content = content
+            post.put()
+            self.redirect('/blog/%s' % post_id)
+        else:
+            error = "subject and content, please!"
+            self.render("editpost.html", subject=subject,
+                        content=content, error=error)
 
 app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/signup', Register),
                                ('/login', Login),
                                ('/logout', Logout),                               
                                ('/newpost', NewPost),
-                               ('/blog/([0-9]+)', PostPage)
+                               ('/blog/([0-9]+)', PostPage),
+                               ('/blog/editpost/([0-9]+)', EditPost)
                                ],
                                debug=True)
 

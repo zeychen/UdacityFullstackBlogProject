@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+	<div>
+		<a href="/blog/editpost/{{post.key().id()}}">Edit</a>
+	</div>
   {{post.render() | safe}}
 {% endblock %}
