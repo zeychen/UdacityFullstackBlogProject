@@ -1,11 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
+	<div class="header">
+		<div class="navbar">
+	        {% if user %}
+	        <div class="left">
+	            <h1><a class="nav-card white" href="/blog"><i class="fa fa-globe" aria-hidden="true"></i> {{user.name}}'s travel blog</a></h1>
+	        </div>
+	        <div class="right">
+	            <div class="nav">
+	                <a class="nav-card white" href="/blog/newpost"><i class="fa fa-pencil" aria-hidden="true"></i> New Post</a>
+	            </div>
+	            <div class="nav">
+	                <a class="nav-card white" href="/user/logout">Logout 
+	                	<i class="fa fa-sign-out" aria-hidden="true"></i>
+	                </a>
+	            </div>
+	        </div>
+	        {% else %}
+	        <div class="left">
+	            <h1>Full Cirle travel blog</h1>
+	        </div>
+	        <div class="right">
+		        <div class="nav">
+		            <a href="/user/login">Login</a>
+		            <a href="/user/signup">Sign Up</a>
+		        </div>
+		    </div>
+	        {% endif %}
+        </div>
+	</div>
 
-  {% for p in posts %}
-  <div>
-    {{ p.render() | safe }}
-  </div>
-  {% endfor %}
+	<div class="cards-container">
+	{% for p in posts %}
+	
+		<div class="cards">
+			{{ p.render() | safe }}
+		</div>
+	{% endfor %}
+	</div>
+
+	<div class="footer">
+	    <i class="fa fa-bicycle fa-2x" aria-hidden="true"></i>
+	</div>
 
 {% endblock %}

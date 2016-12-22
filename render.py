@@ -12,8 +12,6 @@ Created: 12/15/2016
 """
 
 
-
-
 """
 ########## Jinja template for rendering ##########
 """
@@ -25,7 +23,7 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                         autoescape = True)
 
 
-def render_str(template, **params):
+def helper_render_str(template, **params):
     # load template file and create jinja template t
     # returns string
     t = jinja_env.get_template(template)

@@ -4,34 +4,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link type="text/css" rel="stylesheet" href="/static/main.css" />
+  <link type="text/css" rel="stylesheet" href="/static/css/main.css" />
+  <link type="text/css" rel="stylesheet" href="/static/css/welcome.css" />
+  <link type="text/css" rel="stylesheet" href="/static/css/form.css" />
+  <link type="text/css" rel="stylesheet" href="/static/css/front.css" />
+  <link type="text/css" rel="stylesheet" href="/static/css/post.css" />
+  <link type="text/css" rel="stylesheet" href="/static/css/newpost.css" />
+  <link type="text/css" rel="stylesheet" href="/static/css/editcomment.css" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet" />
+  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="screen">
 
-
-  <title>Udacity Multi User Blog Project</title>
-
+  <title>Full Circle Blog</title>
 </head>
 
 <body>
-  <a href="/" class="main-title">
-    CS 253 Blog
-  </a>
+  {% block content %}   
 
-  <div class="login-area">
-    {% if user %}
-      <a href="/newpost">New Post</a>
-      {{user.name}} (<a class="login-link" href="/logout">logout</a>)
-    {% else %}
-      <a class="login-link" href="/login">login</a>
-      |
-      <a class="login-link" href="/signup">signup</a>
-    {% endif %}
-  </div>
-
-  <div id="content">
-  {% block content %}
   {% endblock %}
-  </div>
+
+  <!-- jQuery to help with animations -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="/static/js/typewriter/typed.js"></script>
+  <script src="/static/js/typewriter.js"></script>
+  <script src="/static/js/animate.js"></script>
+  
+
 </body>
 
 </html>
-

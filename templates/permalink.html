@@ -1,34 +1,104 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<div>
-    <a href="/blog/deletepost/{{post.key().id()}}">Delete</a>
-		<a href="/blog/editpost/{{post.key().id()}}">Edit</a>
-	</div>
-  	{{post.render() | safe}}
+  <div class="header">
+    <div class="navbar">
+          {% if user %}
+          <div class="left">
+              <h1><a class="nav-card white" href="/blog"><i class="fa fa-globe" aria-hidden="true"></i> {{user.name}}'s travel blog</a></h1>
+          </div>
+          <div class="right">
+              <div class="nav">
+                  <a class="nav-card white" href="/blog/newpost"><i class="fa fa-pencil" aria-hidden="true"></i> New Post</a>
+              </div>
+              <div class="nav">
+                  <a class="nav-card white" href="/user/logout">Logout 
+                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                  </a>
+              </div>
+          </div>
+          {% else %}
+          <div class="left">
+              <h1>Full Cirle travel blog</h1>
+          </div>
+          <div class="right">
+            <div class="nav">
+                <a class="nav-card white" href="/user/login">Login</a>
+                <a class="nav-card white" href="/user/signup">Sign Up</a>
+            </div>
+        </div>
+          {% endif %}
+        </div>
+  </div>
 
-    <form method="post" role="form">
-                <input type="hidden" class="form-control" id="like" name="like" value="update">
-                <button type="submit" class="btn btn-primary">Like {{likescount}}</button>
-            </form>
 
+
+  <div class="cards-container">
+    <div class="perma-cards">
+      <div class="perma-content">
+    	 {{post.render() | safe}}
+      </div>
+
+      <div class="perma-mod left">
+        <form method="post" role="form" class="nav">
+          <input type="hidden" class="form-control" id="like" name="like" value="update">
+          <button class="nav-card white" id="like-button" type="submit"><i class="fa fa-heart" aria-hidden="true"></i> Like {{likescount}}</button>
+        </form>
+      </div>
+
+      <div class="perma-mod nav right">
+        <a class="nav-card white" href="/blog/editpost/{{post.key().id()}}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+        <a class="nav-card white" class="delete" href="/blog/deletepost/{{post.key().id()}}">Delete</a>
+      </div>
+    </div>
+  </div>
+
+
+
+    
+
+  <div class="comment-cards-container">
+    <div class="perma-cards no-top-margin">
   	<form method="post" role="form" class="comment-form">
-        <label>
-          <div>comment</div>
-          <input name="comment">{{comment}}</input>
-        </label>
-        <input type="submit">
+        <h3 class="sub-title no-top-margin">Leave a comment</h3>
+
+        <div class="post-row" id="text-input">
+          <textarea class="comment-user-input" name="comment">{{comment}}</textarea>
+        </div>
+        <div class="post-row">
+          <input type="submit" id="new-post-submit" value="Send"><span id="post-plane"></span>
+        </div>
     </form>
-    {% for c in comments %}
-      <blockquote>
-    <a href="/blog/deletecomment/{{post.key().id()}}/{{c.key().id()}}">Delete</a>
-    <a href="/blog/editcomment/{{post.key().id()}}/{{c.key().id()}}">Edit</a>
-          <p>{{ c.comment }}</p>
-          <footer>{{ c.getAuthor() }}</footer>
-      </blockquote>
-    {% endfor %}
+    </div>
+  </div>
 
+  {% for c in comments %}
+  <div class="comment-cards-container">
+    <div class="comment-perma-cards">
+      <div class="perma-content">
+       
+       {{ c.comment }}
+      </div>
 
+      <div class="perma-mod-comment nav left comment-author">
+        {{ c.getAuthor() }}
+      </div>
+
+      <div class="perma-mod-comment nav right">
+        <a class="comment-mod" href="/blog/editcomment/{{post.key().id()}}/{{c.key().id()}}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+        <a lass="comment-mod" href="/blog/deletecomment/{{post.key().id()}}/{{c.key().id()}}">Delete</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+      {{error}}
+
+    
+
+  <div class="footer">
+    <i class="fa fa-bicycle fa-2x" aria-hidden="true"></i>
+  </div>
     
 
 {% endblock %}

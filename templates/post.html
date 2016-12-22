@@ -1,11 +1,15 @@
 <div class="post">
   <div class="post-heading">
     <div class="post-title">
-      <a href="/blog/{{p.key().id()}}">{{p.subject}}</a>
+      <a class="card-post-title" href="/blog/{{p.key().id()}}">{{p.subject}}</a>
     </div>
-
-    <div class="post-date">
-      (Posted on {{p.created.strftime("%b %d, %Y")}} by {{p.getAuthor()}})
+    <div class="author-date">
+      <div class="left post-date">
+        {{p.created.strftime("%b %d, %Y")}}
+      </div>
+      <div class="right post-author">
+        {{p.getAuthor()}}
+      </div>
     </div>
   </div>
 

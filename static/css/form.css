@@ -1,0 +1,76 @@
+/********** Form ***********/
+input[type=submit]#user-submit {
+  width: 86% !important;
+}
+
+.user-input, #user-submit {
+  width: 80%;
+  font-size: 20px;
+  padding: 10px;
+  font-family: 'Open Sans';
+  border-radius: 2px;
+  border: solid 0px;
+  background: #ddd;
+  color: rgba(0, 39, 88, 0.8);
+}
+
+input[type=text].user-input:focus, input[type=password].user-input:focus {
+  background: #fff;
+  outline: none;
+}
+
+.user {
+  margin-top: 20vh;
+  /*bottom: 50vh;*/
+  width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0px 0px 5px 5px rgba(46,61,73,0.1);
+}
+
+.tabs {
+  width: 49.8%;
+  margin: 0px;
+}
+
+.tab {
+  height: 100%;
+  width: 100%;
+  padding-left: 0px;
+  padding-right: 0px;
+  display: inline-block;
+}
+
+.user-label {
+  font-weight: bold;
+  color: rgba(0, 39, 88, 0.8);
+}
+
+.inactive {
+  background-color: #ddd;
+}
+
+.section2 {
+  padding-top: 60px;
+  padding-bottom: 30px;
+}
+
+.row:nth-child(odd) {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  text-align: left;
+  width: 82%;
+  margin-right: auto;
+  margin-left: auto;
+  color: rgba(0, 39, 88, 1);
+}
+
+.row:nth-child(even) {
+  margin-bottom: 10px;
+}
+
+.error {
+  height: 22px;
+  color: #ff0000 !important;
+  text-align: center !important;
+}

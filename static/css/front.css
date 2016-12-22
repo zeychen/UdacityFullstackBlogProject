@@ -1,0 +1,24 @@
+
+.cards-container {
+	background: rgba(245, 245, 245, 0.6);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	width: 100vw;
+	padding-bottom: 40px;
+}
+
+.cards {
+	width: 25%;
+	width: 80%;
+	overflow: hidden;
+	border-radius: 3px;
+	background: rgba(255, 255, 255, 1);
+	user-select:none;
+	margin-top: 30px;
+	box-shadow: 2px 5px 5px 0px rgba(46,61,73,0.3);
+	justify-content: center;
+	padding: 20px;
+	margin-left: 10px;
+	margin-right: 10px;
+}

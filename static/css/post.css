@@ -1,0 +1,106 @@
+.card-post-title {
+	font-size: 30px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+}
+
+.post-title {
+	text-align: left;
+}
+
+.author-date {
+	height: 22px;
+	color: #ccc;
+}
+
+.post-content {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	text-align: left;
+	min-height: 30px;
+}
+
+/******** permalink *******/
+.perma-cards {
+	width: 80%;
+	min-width: 280px;
+	border-radius: 3px;
+	background: rgba(255, 255, 255, 1);
+	user-select:none;
+	margin-top: 30px;
+	box-shadow: 2px 5px 5px 0px rgba(46,61,73,0.3);
+	justify-content: center;
+	padding: 20px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.perma-mod {
+	margin-bottom: 0px;
+	height: 42px;
+}
+
+#like-button {
+	min-width: 100px;
+}
+
+form.nav {
+	margin-top: 19px;
+}
+
+button {
+	font-size: 16px;
+	padding: 14px;
+	cursor: pointer;
+}
+
+.no-top-margin {
+	margin-top: 0px;
+}
+
+textarea.comment-user-input {
+	font-size: 16px;
+}
+
+input[type=submit]#new-post-submit {
+	background: rgba(0, 39, 88, 0.8);
+	color: #fff;
+}
+
+.comment-cards-container {
+	background: rgba(245, 245, 245, 0.6);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	width: 100vw;
+	text-align: left;
+}
+
+.perma-cards.no-top-margin {
+	margin-bottom: 20px;
+}
+
+.comment-perma-cards {
+	width: 80%;
+	min-width: 280px;
+	/*border-radius: 3px;*/
+	background: rgba(255, 255, 255, 1);
+	user-select:none;
+	/*margin-top: 10px;*/
+	box-shadow: 1px 1px 1px 1px rgba(46,61,73,0.3);
+	justify-content: center;
+	padding: 20px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.comment-perma-cards:first-child {
+	/*margin-top: 20px;*/
+}
+
+.comment-author {
+	color: #ccc;
+	text-align: left;
+}
+

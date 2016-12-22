@@ -1,0 +1,63 @@
+.form-cards {
+	width: 80%;
+	height: 700px;
+}
+
+.form-content {
+	width:94%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.cards-container {
+	text-align: left;
+}
+
+.post-row:nth-child(even) {
+	margin-top: 10px;
+	margin-bottom: 5px;
+	text-align: left;
+	color: rgba(0, 39, 88, 1);
+}
+
+.post-row:nth-child(odd) {
+	margin-bottom: 10px;
+}
+
+.post-user-input, #new-post-submit, .comment-user-input, #comment-input {
+	width: 100%;
+	font-size: 20px;
+	padding: 10px;
+	font-family: 'Open Sans';
+	border-radius: 2px;
+	border: solid 1px #ddd;
+	background: #ddd;
+	color: rgba(0, 39, 88, 0.8);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.post-user-input, .comment-user-input, #comment-input {
+	width: 97%;
+}
+
+
+.post-user-input:hover, 
+.post-user-input:focus,
+.comment-user-input:hover, 
+.comment-user-input:focus,
+#comment-input:hover,
+#comment-input:focus {
+	background: #fff;
+  	outline: none;
+}
+
+textarea.post-user-input {
+	min-height: 350px;
+	font-size: 16px;
+}
+
+.footer {
+	text-align: left;
+	background: rgba(245, 245, 245, 0.6);
+}

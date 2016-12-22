@@ -1,22 +1,63 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>new post</h2>
+  <div class="header">
+    <div class="navbar">
+          {% if user %}
+          <div class="left">
+              <h1><a class="nav-card white" href="/blog"><i class="fa fa-globe" aria-hidden="true"></i> {{user.name}}'s travel blog</a></h1>
+          </div>
+          <div class="right">
+              <div class="nav">
+                  <a class="nav-card white" href="/blog/newpost"><i class="fa fa-pencil" aria-hidden="true"></i> New Post</a>
+              </div>
+              <div class="nav">
+                  <a class="nav-card white" href="/user/logout">Logout 
+                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                  </a>
+              </div>
+          </div>
+          {% else %}
+          <div class="left">
+              <h1>Full Cirle travel blog</h1>
+          </div>
+          <div class="right">
+            <div class="nav">
+                <a href="/user/login">Login</a>
+                <a href="/user/signup">Sign Up</a>
+            </div>
+        </div>
+          {% endif %}
+        </div>
+  </div>
 
-    <form method="post">
-      <label>
-        <div>subject</div>
-        <input type="text" name="subject" value="{{subject}}">
-      </label>
-
-      <label>
-        <div>blog</div>
-        <textarea name="content">{{content}}</textarea>
-      </label>
-
-      
-      <div class="error">{{error}}</div>
-
-      <input type="submit">
+  <div class="cards-container">
+    <form method="post" class="form-cards cards">
+      <div class="form-content">
+        <h2 class="sub-title">Share A New Adventure <i class="fa fa-plane" class="post-plane" aria-hidden="true"></i></h2>
+        <div class="post-row">
+          <label class="user-label">Title</label>
+        </div>
+        <div class="post-row">
+          <input class="post-user-input" type="text" name="subject" value="{{subject}}">
+        </div>
+        <div class="post-row">
+          <label class="user-label">Your Story</label>
+        </div>
+        <div class="post-row" id="text-input">
+          <textarea class="post-user-input" name="content">{{content}}</textarea>
+        </div>
+        <div class="post-row">
+          <div class="error">{{error}}</div>
+        </div>
+        <div class="post-row">
+          <input type="submit" id="new-post-submit" value="Send"><span id="post-plane"></span>
+        </div>
+      </div>
     </form>
+  </div>
+
+  <div class="footer">
+    <i class="fa fa-bicycle fa-2x" aria-hidden="true"></i>
+  </div>
 {% endblock %}

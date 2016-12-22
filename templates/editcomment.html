@@ -1,21 +1,58 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>edit post</h2>
-
-        <form method="post" role="form">
-
-            <input type="hidden" id="post_id" name="post_id" value="{{post_id}}">
-            
-            <div class="form-group">
-                <label for="subject">Comment:</label>
-                <textarea name="comment" value="{{comment}}">{{comment}}</textarea>
+<div class="header">
+    <div class="navbar">
+        {% if user %}
+        <div class="left">
+              <h1><a class="nav-card white" href="/blog"><i class="fa fa-globe" aria-hidden="true"></i> {{user.name}}'s travel blog</a></h1>
+        </div>
+        <div class="right">
+            <div class="nav">
+                <a class="nav-card white" href="/blog/newpost"><i class="fa fa-pencil" aria-hidden="true"></i> New Post</a>
             </div>
-           
-            {% if error %}
-            <div class="alert alert-danger" role="alert">{{error}}</div>
-            {% endif %}
+            <div class="nav">
+                <a class="nav-card white" href="/user/logout">Logout 
+                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="left">
+            <h1>Full Cirle travel blog</h1>
+        </div>
+        <div class="right">
+            <div class="nav">
+                <a class="nav-card white" href="/user/login">Login</a>
+                <a class="nav-card white" href="/user/signup">Sign Up</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
 
-            <button type="submit" class="btn btn-success">Submit</button>
-        </form>
+  <div class="cards-container">
+    <form method="post" class="comment-form-cards cards comment-card">
+      <div class="form-content">
+        <h2 class="sub-title">Update Your Comment <i class="fa fa-plane" class="post-plane" aria-hidden="true"></i></h2>
+        <input type="hidden" id="post_id" name="post_id" value="{{post_id}}">
+        <div class="post-row">
+          <label class="user-label">Your comment</label>
+        </div>
+        <div class="post-row">
+          <textarea class="comment-edit" id="comment-input" name="comment" value="{{comment}}">{{comment}}</textarea>
+        </div>
+        <div class="post-row">
+          <div class="error">{{error}}</div>
+        </div>
+        <div class="post-row">
+          <input type="submit" id="new-post-submit" value="Update"><span id="post-plane"></span>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="footer">
+    <i class="fa fa-bicycle fa-2x" aria-hidden="true"></i>
+  </div>   
 {% endblock %}

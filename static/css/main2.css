@@ -1,0 +1,82 @@
+/********** General ***********/
+html, body, ul {
+	margin: 0px;
+	font-family: 'Open Sans',sans-serif,verdana;
+	text-align: center;
+	color: #bbb;
+	list-style: none;
+}
+
+html, body {
+	width: 100%;
+}
+
+body {
+	background: #fff;
+}
+
+a {
+	text-decoration: none;
+	padding: 12px;
+	cursor: pointer;
+}
+
+.white {
+	color: #fff;
+}
+
+/********** Header ***********/
+.title {
+	margin-top: 25vh;
+	margin-bottom: 0px;
+	font-size: 75px;
+	color: #fff;
+}
+
+.phrase {
+	height: 33px;
+	font-size: 24px;
+	margin-top: 0px;
+	margin-bottom: 100px;
+}
+
+.buttons {
+	display: inline-block;
+	margin-top: 20px;
+}
+
+.button {
+	border: 2px solid #bbb;
+	padding-left: 40px;
+	padding-right: 40px;
+	margin-left: 30px;
+	margin-right: 30px;
+	background: 
+		linear-gradient(
+			to right,
+			rgba(0, 147, 208, 1) 50%,
+			transparent 50%);
+	background: 
+	    -webkit-linear-gradient(
+	    	left, 
+	    	rgba(0, 147, 208, 1) 50%,
+			transparent 50%);	/* For Safari 5.1 to 6.0 */
+	background: 
+	    -o-linear-gradient(
+	    	left, 
+	    	rgba(0, 147, 208, 1) 50%,
+			transparent 50%);	/* For Opera 11.1 to 12.0 */
+    background: 
+    	-moz-linear-gradient(
+    		left, 
+	    	rgba(0, 147, 208, 1) 50%,
+			transparent 50%); /* For Firefox 3.6 to 15 */
+	background-size: 200% 100%;
+	background-position: right top;
+    transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease; /* Safari */
+}
+
+.button:hover {
+	background-position:left top;
+}

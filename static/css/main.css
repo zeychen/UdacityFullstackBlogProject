@@ -1,0 +1,116 @@
+/********** General ***********/
+html, body, ul {
+    margin: 0px;
+    font-family: 'Open Sans',sans-serif,verdana;
+    text-align: center;
+    color: rgba(0, 39, 88, 1);
+    list-style: none;
+}
+
+html, body {
+    width: 100%;
+    background: rgba(245, 245, 245, 0.6);
+}
+
+body {
+    background: #fff;
+}
+
+a {
+    text-decoration: none;
+    padding: 12px;
+    cursor: pointer;
+    color: rgba(0, 39, 88, 0.8);
+}
+
+textarea {
+    resize: none;
+}
+
+input[type=submit] {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.white {
+    color: #fff;
+}
+
+.sub-title {
+    color: rgba(0, 39, 88, 0.8);
+    cursor: default
+}
+
+/************* Navigation *************/
+.header {
+    height: 86px;
+    margin: 0px;
+    padding: 0px;
+    background: rgba(245, 245, 245, 0.6);
+    color: #fff;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.8);
+}
+
+.navbar {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.nav {
+    margin-top: 30px;
+    display: inline-block;
+    min-width: 100px;
+    text-align: center;
+}
+
+.nav-card {
+    border: solid 0px;
+    background: rgba(0, 39, 88, 0.8);
+    border-radius: 3px;
+    box-shadow: 8px 10px 20px 0px rgba(46,61,73,0.3);
+}
+
+.nav-card:hover {
+    box-shadow: 5px 8px 10px 0px rgba(46,61,73,0.15);
+}
+
+.fa-globe, .fa-pencil, .fa-sign-out {
+    -webkit-transition: -webkit-transform .8s ease;
+          transition:         transform .8s ease;
+}
+
+.nav-card:hover .fa-globe {
+    transform: rotate(360deg);
+}
+
+.nav-card:hover .fa-pencil {
+    transform: rotateZ(-15deg);
+}
+
+.nav-card:hover .fa-sign-out {
+    transform: translateX(3px);
+}
+
+
+/************* Footer *************/
+.fa-bicycle {
+    padding-top: 20px;
+    font-size: 30px;
+    transform: translateX(-50px);
+    animation: cruise 5s linear 0s infinite normal;
+}
+
+@keyframes cruise {
+    20%    {transform: translateX(200px) rotate(-60deg)}
+    30%    {transform: translateX(250px) rotate(0deg)}
+    100%   {transform: translateX(100vw)}
+}
