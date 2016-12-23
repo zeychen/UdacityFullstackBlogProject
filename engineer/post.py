@@ -21,7 +21,7 @@ class BlogFront(Handler):
 
             self.render('front.html', posts = posts)
         else:
-            self.render("/user/login")
+            return self.redirect("/user/login")
 
 
 class PostPage(Handler):
@@ -35,7 +35,7 @@ class PostPage(Handler):
         likes = db.GqlQuery("select * from Like where post_id="+post_id)
 
         if not post:
-            self.error(404)
+            self.render("404page.html")
             return
 
         self.render("permalink.html", post = post, comments=comments,
@@ -50,7 +50,7 @@ class PostPage(Handler):
 
 
         if not post:
-            self.error(404)
+            self.render("404page.html")
             return
 
         if (self.user):

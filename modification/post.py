@@ -21,7 +21,7 @@ class NewPost(Handler):
 
     def post(self):
         if not self.user:
-            self.redirect('/blog')
+            return self.redirect('/blog')
 
         subject = self.request.get('subject')
         content = self.request.get('content')
@@ -57,15 +57,17 @@ class EditPost(Handler):
 
 
     def post(self, post_id):
-        if not self.user:
-            self.redirect('/blog')
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        post = db.get(key)
+        if post.user_id != self.user.key().id():
+            return self.redirect('/blog')
 
         subject = self.request.get('subject')
         content = self.request.get('content')
 
         if subject and content:
-            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
-            post = db.get(key)
+            # key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            # post = db.get(key)
             post.subject = subject
             post.content = content
             post.put()

@@ -30,14 +30,14 @@ class EditComment(Handler):
 
 
     def post(self, post_id, comment_id):
-        if not self.user:
-            self.redirect('/blog/')
+        key = db.Key.from_path('Comment', int(comment_id), parent=blog_key())
+        comm = db.get(key)
+        if comm.user_id != self.user.key().id():
+            return self.redirect('/blog')
 
         comment = self.request.get('comment')
 
         if comment:
-            key = db.Key.from_path('Comment', int(comment_id), parent=blog_key())
-            comm = db.get(key)
             comm.comment = comment
             comm.put()
             self.redirect('/blog/%s' % post_id )
