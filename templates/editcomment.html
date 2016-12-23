@@ -35,7 +35,7 @@
     <form method="post" class="comment-form-cards cards comment-card">
       <div class="form-content">
         <h2 class="sub-title">Update Your Comment <i class="fa fa-plane" class="post-plane" aria-hidden="true"></i></h2>
-        <input type="hidden" id="post_id" name="post_id" value="{{post_id}}">
+        <input type="hidden" id="post_id" name="post_id" value="{{comment_id}}">
         <div class="post-row">
           <label class="user-label">Your comment</label>
         </div>
@@ -47,6 +47,9 @@
         </div>
         <div class="post-row">
           <input type="submit" id="new-post-submit" value="Update"><span id="post-plane"></span>
+        </div>
+        <div class="post-row right">
+          <a href="/blog/{{post_num}}">I changed my mind!</a>
         </div>
       </div>
     </form>

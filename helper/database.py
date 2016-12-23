@@ -77,6 +77,10 @@ class Post(db.Model):
         self._render_text = self.content.replace('\n', '<br>')
         return render.helper_render_str("post.html", p = self)
 
+    # @classmethod
+    # def getPost(cls, post_id):
+    #     return Post.get_by_id(int(post_id))
+
 
 """
 ########## Save Comments To Database ##########

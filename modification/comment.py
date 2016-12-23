@@ -14,10 +14,13 @@ class EditComment(Handler):
     def get(self, post_id, comment_id):
         if self.user:
             key = db.Key.from_path('Comment', int(comment_id), parent=blog_key())
+            post_key = db.Key.from_path('Post', int(post_id), parent=blog_key())
             comm = db.get(key)
+            post = db.get(post_key)
 
             if comm.user_id == self.user.key().id():
-                self.render("editcomment.html", comment=comm.comment)
+                self.render("editcomment.html", comment=comm.comment,
+                            post_num=post.key().id())
             else:
                 self.redirect("/blog/" + post_id + "?error=You don't have " +
                               "access to edit this comment.")
@@ -39,9 +42,8 @@ class EditComment(Handler):
             comm.put()
             self.redirect('/blog/%s' % post_id )
         else:
-            error = "subject and content, please!"
-            self.render("editpost.html", subject=subject,
-                        content=content, error=error)
+            error = "Need to have content, please!"
+            self.render("editcomment.html", comment=comment, error=error)
 
 
 class DeleteComment(Handler):

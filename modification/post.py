@@ -46,7 +46,7 @@ class EditPost(Handler):
 
             if post.user_id == self.user.key().id():
                 self.render("editpost.html", subject=post.subject,
-                            content=post.content)
+                            content=post.content, post_num=post.key().id())
             else:
                 error = "You can't edit someone else's post."
                 self.redirect("/blog/" + post_id + "?error=You don't have " +
